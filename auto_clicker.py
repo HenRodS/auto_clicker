@@ -3,10 +3,10 @@ import time
 from pynput import keyboard, mouse
 
 class AutoKey:
-    def __init__(self, key_to_repeat, toggle_key, m_button_to_repeat):
+    def __init__(self, toggle_key, key_to_repeat=None, m_button_to_repeat=None):
         self.keyboard_ctrl = keyboard.Controller()
         self.mouse_ctrl = mouse.Controller()
-        self.key_to_repeat = keyboard.KeyCode.from_char(key_to_repeat)
+        self.key_to_repeat = keyboard.KeyCode.from_char(key_to_repeat) if key_to_repeat else None
         self.toggle_key = toggle_key
         self.m_button_to_repeat = m_button_to_repeat
         self.k_repeating = False
@@ -41,13 +41,13 @@ class AutoKey:
         """Função que rodará em uma thread separada pra não travar o teclado"""
         while self.active:
             if self.running:
-                if self.k_repeating:
+                if self.k_repeating and self.key_to_repeat:
                     self.keyboard_ctrl.press(self.key_to_repeat)
                     self.keyboard_ctrl.release(self.key_to_repeat)
                     print("click")
                     time.sleep(0.1)
 
-                if self.m_repeating:
+                if self.m_repeating and self.m_button_to_repeat:
                     self.mouse_ctrl.click(self.m_button_to_repeat)
                     print("mouse click!")
                     time.sleep(0.1)
@@ -67,7 +67,7 @@ class AutoKey:
 
         print("--- Script Iniciado ---")
         print("Aperte F8 para Ligar/Desligar")
-        print("Aperte Alt Gr para encerrar o script")
+        print("Aperte Num Lock para encerrar o script")
 
         try:
             while self.active:
@@ -77,5 +77,6 @@ class AutoKey:
             m_listener.stop()
 
 if __name__ == "__main__":
-    app = AutoKey(key_to_repeat='e', toggle_key=keyboard.Key.f8, m_button_to_repeat=mouse.Button.left)
+    # No momento não tem nenhum menu, então tem que declarar 'manualmente' qual a tecla que quer repetir
+    app = AutoKey(toggle_key=keyboard.Key.f8, m_button_to_repeat=mouse.Button.left)
     app.run()
