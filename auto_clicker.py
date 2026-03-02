@@ -18,6 +18,7 @@ class AutoKey:
         self.m_repeating = False
         self.running = False
         self.active = True
+        self.ignore_click = False
 
     def on_press(self, key):
         """é chamada quando o listener detectou que pressionou"""
@@ -38,9 +39,12 @@ class AutoKey:
             self.k_repeating = False
 
     def on_click(self, x, y, button, pressed):
-        if button == self.m_button_to_repeat:
-            # print(f"Botão esquerdo {'pressionado' if pressed else 'solto'}")
-            self.m_repeating = pressed
+        if button == self.m_button_to_repeat and pressed:
+            if self.ignore_click:
+                return  # ignora clique sintético
+            
+            self.m_repeating = not self.m_repeating
+            print(f"Mouse spam {'ativado' if self.m_repeating else 'desativado'}")
     
     def clicker(self):
         """Função que rodará em uma thread separada pra não travar o teclado"""
@@ -58,9 +62,12 @@ class AutoKey:
 
                 # --- Mouse --- #
                 if self.m_repeating and self.m_button_to_repeat:
-                    self.mouse_ctrl.click(self.m_button_to_repeat)
-                    print("teste mouse CLICK!")
-                    action_taken = True
+                    self.ignore_click = True
+                    self.mouse_ctrl.press(self.m_button_to_repeat)
+                    self.mouse_ctrl.release(self.m_button_to_repeat)
+                    self.ignore_click = False
+                    print("teste key CLICK!")
+                    time.sleep(0.2)
 
                 # Se clicou, usa a taxa de click. Se não, usa um descanso minimo
                 time.sleep(0.1 if action_taken else 0.01)

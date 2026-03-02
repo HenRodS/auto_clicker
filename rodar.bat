@@ -7,6 +7,7 @@ if not exist "venv" (
 
 :: 2. Ativa o ambiente e instala as dependências
 echo Atualizando dependencias...
+
 call venv\Scripts\activate
 pip install -r requirements.txt --quiet
 
