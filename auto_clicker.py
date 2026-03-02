@@ -2,6 +2,7 @@ import threading
 import time
 from pynput import keyboard, mouse
 
+
 # Teclas/mouse para repetir o click
 key = 'e'
 mouse_click = mouse.Button.left
